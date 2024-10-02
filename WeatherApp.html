@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        body {
+            background-color: rgb(90, 85, 85);
+            width: 120vw;
+            height: 150vh;
+        }
+
+        .container {
+
+            width: 25vw;
+            height: 550px;
+            top: 10%;
+            position: relative;
+            left: 30%;
+            background-color: aquamarine;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: -5px -5px 4px 2px;
+            min-width: 400px;
+
+        }
+
+        .search-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .search-bar input {
+            border: none;
+            width: 210px;
+            padding: 10px;
+            border-radius: 22px;
+            margin-top: 15px;
+
+        }
+
+        .search-bar button {
+            background-color: transparent;
+            width: 45px;
+            height: 10px;
+            border: none;
+            cursor: pointer;
+
+        }
+
+        .main {
+            display: flex;
+            justify-content: center;
+            margin: 15px;
+        }
+
+        .display-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1,
+        h2 {
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .extra {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .humidity,
+        .wind {
+            display: flex;
+            margin: 15px;
+            align-items: center;
+        }
+
+        .extra img {
+            margin-right: 10px;
+        }
+
+        .extra p {
+            font-weight: bold;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" placeholder="Enter a city name...">
+            <button><img src="search.png" style="width: 20px;" onclick="cityname()"></button>
+        </div>
+
+        <div class="main">
+
+        </div>
+
+        <div class="display-info">
+            <h1></h1>
+            <h2></h2>
+        </div>
+
+        <div class="extra">
+            <div class="humidity">
+                <img src="humidity.png">
+                <p><br>
+                </p>
+            </div>
+            <div class="wind">
+                <img src="wind.png">
+                <p><br>
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+
+
+        const searchInput = document.querySelector(".search-bar input");
+
+        searchInput.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                cityname();
+            }
+        });
+
+
+        function cityname() {
+            var city = document.querySelector(".search-bar input").value;
+            console.log(city);
+            checkWeather(city);
+
+            document.querySelector(".display-info h2").innerText = city;
+        }
+        const apikey = "b228df958e79918920c490ffed2dae32";
+        const apiurl = "https://api.openweathermap.org/data/2.5/weather?&units=metric";
+
+        async function checkWeather(city) {
+            try {
+                const response = await fetch(apiurl + `&q=${city}` + `&appid=${apikey}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                var data = await response.json();
+                console.log(data);
+                chnages(data);
+            }
+            catch (error) {
+                console.log("There was a problem", error);
+                alert("Failed to fetch data.");
+            }
+
+
+        }
+
+        function chnages(data) {
+            document.querySelector(".main").innerHTML = "";
+            const tem = document.querySelector(".display-info h1");
+            tem.innerText = `${data.main.temp} °C`;
+            const humid = document.querySelector(".humidity p");
+            humid.innerText = `${data.main.humidity} %
+            Humidity`;
+            const win = document.querySelector(".wind p");
+            win.innerText = `${data.wind.speed} km/h
+            Wind Speed`;
+
+            const weathertype = data.weather[0].main;
+
+            const pic = document.createElement("img");
+            pic.src = `${weathertype}.png`;
+            console.log(pic);
+
+
+            const imgcontain = document.querySelector(".main");
+            // console.log(`${pic}`);
+            imgcontain.append(pic);
+
+        }
+
+
+    </script>
+
+</body>
+
+</html>
